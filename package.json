@@ -6,6 +6,7 @@
     "start": "node src/server.js",
     "init-collection": "node src/scripts/initCollection.js",
     "batch-vectorize": "node src/scripts/batchVectorize.js",
+    "import-notes": "node src/scripts/importNotes.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

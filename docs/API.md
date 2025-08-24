@@ -1,12 +1,16 @@
-# 小红书AI搜索服务 API 文档
+# 小红书 AI 搜索服务 API 文档
 
 ## 目录
-- [环境配置](#环境配置)
-- [启动服务](#启动服务)
-- [API接口](#api接口)
-  - [导入笔记数据](#导入笔记数据)
-  - [获取所有笔记](#获取所有笔记)
-  - [搜索笔记](#搜索笔记)
+
+- [小红书 AI 搜索服务 API 文档](#小红书-ai-搜索服务-api-文档)
+  - [目录](#目录)
+  - [环境配置](#环境配置)
+  - [启动服务](#启动服务)
+  - [API 接口](#api-接口)
+    - [导入笔记数据](#导入笔记数据)
+    - [获取所有笔记](#获取所有笔记)
+    - [搜索笔记](#搜索笔记)
+    - [例子:](#例子)
 
 ## 环境配置
 
@@ -23,21 +27,24 @@ PORT=3000
 ## 启动服务
 
 1. 安装依赖：
+
 ```bash
 npm install
 ```
 
 2. 初始化向量数据库集合：
+
 ```bash
 npm run init-collection
 ```
 
 3. 启动服务：
+
 ```bash
 npm start
 ```
 
-## API接口
+## API 接口
 
 ### 导入笔记数据
 
@@ -48,6 +55,7 @@ npm start
 **方法**: `POST`
 
 **请求数据**:
+
 ```json
 {
   "noteId": "unique_note_id",
@@ -61,6 +69,7 @@ npm start
 ```
 
 **响应数据**:
+
 ```json
 {
   "message": "笔记数据保存成功",
@@ -86,6 +95,7 @@ npm start
 **方法**: `GET`
 
 **响应数据**:
+
 ```json
 [
   {
@@ -110,12 +120,14 @@ npm start
 **方法**: `GET`
 
 **查询参数**:
+
 - `query`: 搜索关键词
-- `topK` (可选): 返回结果数量，默认为5
+- `topK` (可选): 返回结果数量，默认为 5
 
 **示例**: `/search?query=悉尼旅游攻略&topK=10`
 
 **响应数据**:
+
 ```json
 [
   {
@@ -128,4 +140,28 @@ npm start
     }
   }
 ]
+```
+
+### 例子:
+
+```json
+curl -X POST http://localhost:3000/notes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "noteId": "66ef91070000000026032a7c",
+    "originalInput": "https://www.xiaohongshu.com/search_result/66ef91070000000026032a7c...",
+    "timestamp": "2025-08-22T08:02:49.631Z",
+    "detail": {
+      "title": "悉尼旅游攻略｜6天5晚行程分享",
+      "content": "🫶🏻写在前面：如果你是不喜欢打卡式旅游...",
+      "author": "Bunnypeppy",
+      ...
+    }
+  }'
+
+// 或者
+# 从文件读取数据（@ 符号表示从文件读取）
+curl -X POST http://localhost:3000/notes \
+  -H "Content-Type: application/json" \
+  -d @filename.json
 ```
