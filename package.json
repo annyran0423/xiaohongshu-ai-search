@@ -7,6 +7,8 @@
     "init-collection": "node src/scripts/initCollection.js",
     "batch-vectorize": "node src/scripts/batchVectorize.js",
     "import-notes": "node src/scripts/importNotes.js",
+    "batch-upload": "node src/scripts/batchUpload.js",
+    "quick-upload": "node src/scripts/quickUpload.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
