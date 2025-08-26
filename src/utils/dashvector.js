@@ -34,13 +34,18 @@ class DashVectorClient {
     });
   }
 
-  // 创建集合
+  // 创建集合 - 使用正确的 DashVector API 格式
   async createCollection(collectionName, dimension) {
     try {
       const response = await this.axiosInstance.post('/v1/collections', {
         name: collectionName,
         dimension: dimension,
-        metric_type: 'cosine',
+        metric: 'cosine', // 注意：是 metric 不是 metric_type
+        fields_schema: {
+          noteId: 'str',
+          title: 'str',
+          content: 'str'
+        }
       });
       return response.data;
     } catch (error) {
@@ -60,11 +65,11 @@ class DashVectorClient {
     }
   }
 
-  // 插入文档
+  // 插入文档 - 使用正确的格式
   async insertDocs(collectionName, docs) {
     try {
       const response = await this.axiosInstance.post(`/v1/collections/${collectionName}/docs`, {
-        docs: docs,
+        docs: docs
       });
       return response.data;
     } catch (error) {
@@ -73,13 +78,15 @@ class DashVectorClient {
     }
   }
 
-  // 向量搜索
+  // 向量搜索 - 使用正确的格式
   async search(collectionName, vector, topK = 5) {
     try {
-      const response = await this.axiosInstance.post(`/v1/collections/${collectionName}/search`, {
+      const response = await this.axiosInstance.post(`/v1/collections/${collectionName}/query`, {
         vector: vector,
-        topk: topK,
-        output_fields: ['noteId', 'title', 'content'],
+        top_k: topK,
+        include_values: true,
+        include_metadata: true,
+        filter: {}
       });
       return response.data;
     } catch (error) {

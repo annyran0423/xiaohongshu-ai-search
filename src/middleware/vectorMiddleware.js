@@ -6,14 +6,16 @@ const vectorService = new VectorService();
 const vectorizeNote = async (req, res, next) => {
   try {
     const note = req.body;
-    
-    // 生成向量并存储
-    const vector = await vectorService.vectorizeAndStoreNote(note);
-    
-    // 将向量添加到请求对象中
-    req.noteVector = vector;
-    
-    next();
+
+    // 合并标题和内容生成向量
+    const text = `${note.detail.title} ${note.detail.content}`;
+    const vector = await vectorService.dashScopeClient.embedText(text);
+
+    // 将向量添加到请求对象中，供后续中间件使用
+    req.vectorizedData = vector;
+
+    console.log('✅ 向量化处理完成');
+    next(); // 继续到下一个中间件
   } catch (error) {
     console.error('向量化笔记失败:', error);
     res.status(500).json({ error: '向量化笔记失败' });
@@ -24,17 +26,17 @@ const vectorizeNote = async (req, res, next) => {
 const semanticSearch = async (req, res, next) => {
   try {
     const { query, topK } = req.query;
-    
+
     if (!query) {
       return res.status(400).json({ error: '缺少查询参数' });
     }
-    
+
     // 执行语义搜索
     const results = await vectorService.semanticSearch(query, parseInt(topK) || 5);
-    
+
     // 将搜索结果添加到请求对象中
     req.searchResults = results;
-    
+
     next();
   } catch (error) {
     console.error('语义搜索失败:', error);

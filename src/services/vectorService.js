@@ -1,6 +1,6 @@
 require('dotenv').config();
-const DashVectorClient = require('../utils/dashvector');
-const DashScopeClient = require('../utils/dashscope');
+const DashVectorClient = require('../utils/dashvector'); // 向量搜索
+const DashScopeClient = require('../utils/dashscope'); // 向量存储
 
 class VectorService {
   constructor() {
