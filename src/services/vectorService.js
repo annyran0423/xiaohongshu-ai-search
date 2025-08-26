@@ -1,15 +1,22 @@
+require('dotenv').config();
 const DashVectorClient = require('../utils/dashvector');
 const DashScopeClient = require('../utils/dashscope');
 
 class VectorService {
   constructor() {
+    // 调试信息：检查环境变量
+    console.log('🔍 环境变量检查:');
+    console.log('DASHVECTOR_API_KEY:', process.env.DASHVECTOR_API_KEY ? '已设置' : '未设置');
+    console.log('DASHVECTOR_ENDPOINT:', process.env.DASHVECTOR_ENDPOINT || '未设置');
+    console.log('DASHSCOPE_API_KEY:', process.env.DASHSCOPE_API_KEY ? '已设置' : '未设置');
+
     this.dashVectorClient = new DashVectorClient(
       process.env.DASHVECTOR_API_KEY,
       process.env.DASHVECTOR_ENDPOINT
     );
-    
+
     this.dashScopeClient = new DashScopeClient(process.env.DASHSCOPE_API_KEY);
-    
+
     this.collectionName = 'xiaohongshu_notes';
   }
 
@@ -21,9 +28,9 @@ class VectorService {
         await this.dashVectorClient.deleteCollection(this.collectionName);
       } catch (error) {
         // 如果集合不存在，忽略错误
-        console.log('集合不存在，无需删除');
+        console.log('集合不存在，无需删除', error);
       }
-      
+
       // 创建新的集合
       await this.dashVectorClient.createCollection(this.collectionName, dimension);
       console.log(`成功创建集合: ${this.collectionName}`);
@@ -38,10 +45,10 @@ class VectorService {
     try {
       // 合并标题和内容用于向量化
       const text = `${note.detail.title} ${note.detail.content}`;
-      
+
       // 生成向量
       const vector = await this.dashScopeClient.embedText(text);
-      
+
       // 存储到向量数据库
       const doc = {
         id: note.noteId,
@@ -52,10 +59,10 @@ class VectorService {
           content: note.detail.content,
         },
       };
-      
+
       await this.dashVectorClient.insertDocs(this.collectionName, [doc]);
       console.log(`成功向量化并存储笔记: ${note.noteId}`);
-      
+
       return vector;
     } catch (error) {
       console.error(`向量化笔记失败 ${note.noteId}:`, error);
@@ -68,10 +75,10 @@ class VectorService {
     try {
       // 提取所有需要向量化的文本
       const texts = notes.map(note => `${note.detail.title} ${note.detail.content}`);
-      
+
       // 批量生成向量
       const vectors = await this.dashScopeClient.embedTexts(texts);
-      
+
       // 准备存储文档
       const docs = notes.map((note, index) => ({
         id: note.noteId,
@@ -82,11 +89,11 @@ class VectorService {
           content: note.detail.content,
         },
       }));
-      
+
       // 批量存储到向量数据库
       await this.dashVectorClient.insertDocs(this.collectionName, docs);
       console.log(`成功批量向量化并存储 ${notes.length} 条笔记`);
-      
+
       return vectors;
     } catch (error) {
       console.error('批量向量化笔记失败:', error);
@@ -99,10 +106,10 @@ class VectorService {
     try {
       // 为查询文本生成向量
       const queryVector = await this.dashScopeClient.embedText(query);
-      
+
       // 在向量数据库中搜索
       const results = await this.dashVectorClient.search(this.collectionName, queryVector, topK);
-      
+
       return results;
     } catch (error) {
       console.error('语义搜索失败:', error);

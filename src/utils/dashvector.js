@@ -2,14 +2,35 @@ const axios = require('axios');
 
 class DashVectorClient {
   constructor(apiKey, endpoint) {
+    // 验证必要的配置参数
+    if (!apiKey) {
+      throw new Error('DASHVECTOR_API_KEY is required');
+    }
+    if (!endpoint) {
+      throw new Error('DASHVECTOR_ENDPOINT is required');
+    }
+
+    // 验证 endpoint 格式
+    try {
+      new URL(endpoint);
+    } catch (error) {
+      throw new Error(`Invalid DASHVECTOR_ENDPOINT format: ${endpoint}`);
+    }
+
     this.apiKey = apiKey;
     this.endpoint = endpoint;
+
+    console.log(`🔗 DashVector 连接配置:`);
+    console.log(`   Endpoint: ${endpoint}`);
+    console.log(`   API Key: ${apiKey.substring(0, 8)}...`);
+
     this.axiosInstance = axios.create({
       baseURL: endpoint,
       headers: {
         'Content-Type': 'application/json',
         'dashvector-auth-token': apiKey,
       },
+      timeout: 30000, // 30秒超时
     });
   }
 
