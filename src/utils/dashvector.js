@@ -10,13 +10,6 @@ class DashVectorClient {
       throw new Error('DASHVECTOR_ENDPOINT is required');
     }
 
-    // 验证 endpoint 格式
-    try {
-      new URL(endpoint);
-    } catch (error) {
-      throw new Error(`Invalid DASHVECTOR_ENDPOINT format: ${endpoint}`);
-    }
-
     this.apiKey = apiKey;
     this.endpoint = endpoint;
 
