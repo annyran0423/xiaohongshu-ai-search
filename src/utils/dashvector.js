@@ -18,7 +18,7 @@ class DashVectorClient {
     console.log(`   API Key: ${apiKey.substring(0, 8)}...`);
 
     this.axiosInstance = axios.create({
-      baseURL: endpoint,
+      baseURL: `https://${endpoint}`,
       headers: {
         'Content-Type': 'application/json',
         'dashvector-auth-token': apiKey,
