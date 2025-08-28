@@ -15,7 +15,7 @@ class VectorService {
       process.env.DASHVECTOR_ENDPOINT
     );
 
-    this.dashScopeClient = new DashScopeClient(process.env.DASHSCOPE_API_KEY);
+    this.dashScopeClient = new DashScopeClient(process.env.DASHSCOPE_API_KEY, process.env.DASHSCOPE_ENDPOINT);
 
     this.collectionName = 'xiaohongshu_notes';
   }

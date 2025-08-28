@@ -1,10 +1,10 @@
 const axios = require('axios');
 
 class DashScopeClient {
-  constructor(apiKey) {
+  constructor(apiKey, endpoint) {
     this.apiKey = apiKey;
     this.axiosInstance = axios.create({
-      baseURL: 'https://dashscope.aliyuncs.com',
+      baseURL: `https://${endpoint}`,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
