@@ -24,12 +24,12 @@ class VectorService {
   async initCollection(dimension = 1024) {
     try {
       // 先尝试删除已存在的集合
-      try {
-        await this.dashVectorClient.deleteCollection(this.collectionName);
-      } catch (error) {
-        // 如果集合不存在，忽略错误
-        console.log('集合不存在，无需删除', error);
-      }
+      // try {
+      //   await this.dashVectorClient.deleteCollection(this.collectionName);
+      // } catch (error) {
+      //   // 如果集合不存在，忽略错误
+      //   console.log('集合不存在，无需删除', error);
+      // }
 
       // 创建新的集合
       await this.dashVectorClient.createCollection(this.collectionName, dimension);

@@ -33,11 +33,11 @@ class DashVectorClient {
       const response = await this.axiosInstance.post('/v1/collections', {
         name: collectionName,
         dimension: dimension,
-        metric: 'cosine', // 注意：是 metric 不是 metric_type
+        metric: 'dotproduct', // 注意：是 metric 不是 metric_type
         fields_schema: {
-          noteId: 'str',
-          title: 'str',
-          content: 'str'
+          noteId: 'STRING',
+          title: 'STRING',
+          content: 'STRING'
         }
       });
       return response.data;
