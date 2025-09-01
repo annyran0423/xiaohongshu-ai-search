@@ -32,7 +32,7 @@ const semanticSearch = async (req, res, next) => {
     }
 
     // 执行语义搜索
-    const results = await vectorService.semanticSearch(query, parseInt(topK) || 5);
+    const results = await vectorService.semanticSearch(query, parseInt(topK) || 20);
 
     // 将搜索结果添加到请求对象中
     req.searchResults = results;

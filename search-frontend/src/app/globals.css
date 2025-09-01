@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
@@ -23,4 +23,102 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Markdown 内容样式 */
+.prose {
+  color: #374151;
+  max-width: none;
+}
+
+.prose h1 {
+  color: #111827;
+  font-weight: 800;
+  font-size: 1.5em;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  line-height: 1.2;
+}
+
+.prose h2 {
+  color: #111827;
+  font-weight: 700;
+  font-size: 1.25em;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+.prose h3 {
+  color: #111827;
+  font-weight: 600;
+  font-size: 1.125em;
+  margin-top: 1.25em;
+  margin-bottom: 0.5em;
+  line-height: 1.4;
+}
+
+.prose p {
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+  line-height: 1.6;
+}
+
+.prose ul,
+.prose ol {
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+  padding-left: 1.5em;
+}
+
+.prose li {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+  line-height: 1.5;
+}
+
+.prose strong {
+  color: #111827;
+  font-weight: 600;
+}
+
+.prose code {
+  color: #111827;
+  font-weight: 600;
+  font-size: 0.875em;
+  background-color: #f3f4f6;
+  padding: 0.125em 0.25em;
+  border-radius: 0.25em;
+}
+
+.prose pre {
+  color: #111827;
+  background-color: #f9fafb;
+  overflow-x: auto;
+  font-size: 0.875em;
+  line-height: 1.5;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  border-radius: 0.375em;
+  padding: 1em;
+  border: 1px solid #e5e7eb;
+}
+
+.prose blockquote {
+  font-weight: 500;
+  font-style: italic;
+  color: #6b7280;
+  border-left-width: 4px;
+  border-left-color: #a855f7;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding-left: 1em;
+  background-color: #faf5ff;
+  padding: 0.5em 1em;
+  border-radius: 0.25em;
+}
+
+a {
+  color: #3b82f6;
+  text-decoration: underline;
 }

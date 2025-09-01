@@ -9,12 +9,14 @@ export default function Home() {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentQuery, setCurrentQuery] = useState('');
+  const [aiSummary, setAiSummary] = useState<string>('');
 
   const handleSearch = async (query: string) => {
     if (!query.trim()) return;
 
     setIsLoading(true);
     setCurrentQuery(query);
+    setAiSummary(''); // 清除之前的总结
 
     try {
       const response = await fetch('/api/search', {
@@ -22,20 +24,22 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ query, topK: 5 }),
+        body: JSON.stringify({ query, topK: 100, withSummary: true }),
       });
 
       const data = await response.json();
-      debugger;
       if (data.success) {
         setSearchResults(data.data?.results || []);
+        setAiSummary(data.data?.summary || '');
       } else {
         console.error('搜索失败:', data.error);
         setSearchResults([]);
+        setAiSummary('');
       } 
     } catch (error) {
       console.error('网络错误:', error);
       setSearchResults([]);
+      setAiSummary('');
     } finally {
       setIsLoading(false);
     }
@@ -65,6 +69,7 @@ export default function Home() {
             results={searchResults}
             isLoading={isLoading}
             query={currentQuery}
+            summary={aiSummary}
           />
         </div>
 

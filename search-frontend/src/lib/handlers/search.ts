@@ -33,19 +33,42 @@ export class SearchApiHandler extends BaseApiHandler<
     // 参数验证
     this.validateSearchParams(data);
 
-    // 执行搜索
-    const results = await this.searchService.semanticSearch(
-      data.query,
-      data.topK
-    );
+    // 判断是否需要AI总结
+    if (data.withSummary) {
+      console.log('🔄 执行带AI总结的搜索...');
 
-    // 返回响应
-    return {
-      success: true,
-      query: data.query,
-      totalResults: results.length,
-      results,
-    };
+      // 执行带总结的搜索
+      const summaryResult = await this.searchService.semanticSearchWithSummary({
+        query: data.query,
+        topK: data.topK || 5,
+        customPrompt: data.customPrompt,
+        summaryOptions: data.summaryOptions,
+      });
+
+      // 返回带总结的响应
+      return {
+        success: true,
+        query: data.query,
+        totalResults: summaryResult.totalResults,
+        results: summaryResult.searchResults,
+        summary: summaryResult.summary,
+      };
+    } else {
+      // 执行普通搜索
+      console.log('🔄 执行普通语义搜索...');
+      const results = await this.searchService.semanticSearch(
+        data.query,
+        data.topK
+      );
+
+      // 返回普通响应
+      return {
+        success: true,
+        query: data.query,
+        totalResults: results.length,
+        results,
+      };
+    }
   }
 
   // 搜索参数验证
@@ -57,11 +80,20 @@ export class SearchApiHandler extends BaseApiHandler<
         min: 1,
         max: 500,
       },
-      topK: {
+      // topK: {
+      //   required: false,
+      //   type: 'number',
+      //   min: 1,
+      //   max: 100, // 增加topK上限到100
+      // },
+      withSummary: {
         required: false,
-        type: 'number',
-        min: 1,
-        max: 20,
+        type: 'boolean',
+      },
+      customPrompt: {
+        required: false,
+        type: 'string',
+        max: 2000,
       },
     };
 
@@ -74,6 +106,10 @@ export class SearchApiHandler extends BaseApiHandler<
 
     if (data.query.length > 500) {
       throw new ValidationError('查询内容不能超过500个字符');
+    }
+
+    if (data.customPrompt && data.customPrompt.length > 2000) {
+      throw new ValidationError('自定义提示词不能超过2000个字符');
     }
   }
 

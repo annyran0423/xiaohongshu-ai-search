@@ -15,7 +15,6 @@
     "init-collection": "./scripts/run-init-collection.sh",
     "batch-vectorize": "./scripts/run-batch-vectorize.sh",
     "check-data": "node scripts/check-mongo-data.js",
-    "recreate-collection": "node scripts/recreate-collection.js",
     "test-full-flow": "./scripts/test-full-flow.sh",
     "test-dashscope": "./scripts/test-dashscope-api.js",
     "test": "echo \"Error: no test specified\" && exit 1"

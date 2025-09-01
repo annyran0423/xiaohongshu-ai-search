@@ -3,9 +3,17 @@
 export interface SearchRequest {
   query: string;
   topK?: number;
+  withSummary?: boolean; // 是否需要AI总结
+  customPrompt?: string; // 自定义总结提示词
+  summaryOptions?: {
+    max_tokens?: number;
+    temperature?: number;
+    model?: string;
+  };
 }
 
 export interface SearchResult {
+  url: string;
   id: string;
   score: number;
   title: string;
@@ -18,6 +26,7 @@ export interface SearchResponse {
   query: string;
   totalResults: number;
   results: SearchResult[];
+  summary?: string; // AI生成的总结（可选）
 }
 
 export interface ApiError {
