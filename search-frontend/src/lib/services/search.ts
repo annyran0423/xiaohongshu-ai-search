@@ -1,4 +1,5 @@
 // 统一搜索服务 - 整合 DashScope 和 DashVector
+import { KeywordManager } from '../config/keywords';
 import type { SearchResult, VectorSearchResultItem } from '../types/api';
 import { DashScopeService } from './dashscope';
 import { DashVectorService } from './dashvector';
@@ -35,25 +36,8 @@ export class SearchService {
    * 关键词扩展 - 将用户查询扩展为相关关键词
    */
   private expandQueryKeywords(query: string): string[] {
-    const expansions: { [key: string]: string[] } = {
-      拍照: ['摄影', '机位', '拍摄', '照相', '角度', '景点', '美景', '风景'],
-      摄影: ['拍照', '机位', '拍摄', '镜头', '角度', '照片', '相片'],
-      美食: ['餐厅', '吃', '美食', '探店', '必吃', '推荐', '美食攻略'],
-      攻略: ['指南', '路线', '行程', '玩法', '推荐', '经验', '攻略'],
-      旅游: ['旅行', '游览', '景点', '路线', '攻略', '玩法'],
-      悉尼: ['Sydney', '雪梨', '澳洲', '澳大利亚', '新南威尔士'],
-    };
-
-    const expandedKeywords = new Set([query]);
-
-    // 为每个关键词添加扩展
-    query.split(/\s+/).forEach((word) => {
-      if (expansions[word]) {
-        expansions[word].forEach((expanded) => expandedKeywords.add(expanded));
-      }
-    });
-
-    return Array.from(expandedKeywords);
+    // 使用统一的关键词管理器
+    return KeywordManager.expandKeywords(query);
   }
 
   /**

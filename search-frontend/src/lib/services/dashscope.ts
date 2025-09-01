@@ -1,5 +1,6 @@
 // DashScope 服务 - 处理文本向量化和内容生成
 import { env } from '../config/env';
+import { KeywordManager } from '../config/keywords';
 import { HttpClientFactory } from '../http';
 import type { EmbeddingRequest, EmbeddingResponse } from '../types/api';
 
@@ -45,25 +46,8 @@ export class DashScopeService {
    * 简化的关键词扩展（用于内容评估）
    */
   private expandQueryKeywords(query: string): string[] {
-    const expansions: { [key: string]: string[] } = {
-      拍照: ['摄影', '机位', '拍摄', '照相', '角度', '景点', '美景', '风景'],
-      摄影: ['拍照', '机位', '拍摄', '镜头', '角度', '照片', '相片'],
-      美食: ['餐厅', '吃', '美食', '探店', '必吃', '推荐', '美食攻略'],
-      攻略: ['指南', '路线', '行程', '玩法', '推荐', '经验', '攻略'],
-      旅游: ['旅行', '游览', '景点', '路线', '攻略', '玩法'],
-      悉尼: ['Sydney', '雪梨', '澳洲', '澳大利亚', '新南威尔士'],
-    };
-
-    const expandedKeywords = new Set([query]);
-
-    // 为每个关键词添加扩展
-    query.split(/\s+/).forEach((word) => {
-      if (expansions[word]) {
-        expansions[word].forEach((expanded) => expandedKeywords.add(expanded));
-      }
-    });
-
-    return Array.from(expandedKeywords);
+    // 使用统一的关键词管理器
+    return KeywordManager.expandKeywords(query);
   }
   private readonly client: ReturnType<
     typeof HttpClientFactory.createDashScopeClient
@@ -200,6 +184,21 @@ export class DashScopeService {
       }
     });
 
+    // 1.5 主题一致性检查 - 防止主题冲突
+    const themeConflict = KeywordManager.detectThemeConflict(query, content);
+
+    // 如果发现主题冲突，严重降低分数
+    if (themeConflict.hasConflict) {
+      console.log(
+        `⚠️ 发现主题冲突: "${
+          themeConflict.queryTheme
+        }" 搜索中出现 "${themeConflict.conflictingThemes.join(
+          ','
+        )}" 相关内容，降低相关性评分`
+      );
+      score *= 0.2; // 严重惩罚主题冲突的内容
+    }
+
     // 2. 扩展关键词匹配（中等权重）
     const expandedKeywords = this.expandQueryKeywords(query);
     expandedKeywords.forEach((keyword) => {
@@ -302,6 +301,12 @@ export class DashScopeService {
       const defaultPrompt = `🎯 搜索关键词：${query}
 
 请基于以上关键词，严格分析以下搜索结果中的高度相关内容：
+
+重要提示：
+- 如果关键词是"买手店"，只分析与购物、精品店、时尚品牌相关的实用攻略
+- 如果关键词是"美食"，只分析与餐厅、菜品、饮食相关的实用攻略
+- 如果关键词是"咖啡"，只分析与咖啡馆、咖啡文化相关的实用攻略
+- 严格排除主题不符的内容（如在买手店搜索中排除餐厅信息）
 
 ## 📋 输出要求
 
