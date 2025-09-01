@@ -1,14 +1,23 @@
 {
   "name": "xiaohongshu-ai-search",
   "version": "1.0.0",
-  "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "init-collection": "node src/scripts/initCollection.js",
-    "batch-vectorize": "node src/scripts/batchVectorize.js",
-    "import-notes": "node src/scripts/importNotes.js",
-    "batch-upload": "node src/scripts/batchUpload.js",
-    "quick-upload": "node src/scripts/quickUpload.js",
+    "docker:demo": "./scripts/demo-docker-mongodb.sh",
+    "docker:check": "docker --version",
+    "docker:compose": "docker-compose ps",
+    "cleanup": "./scripts/cleanup.sh",
+    "frontend:dev": "cd search-frontend && npm run dev",
+    "frontend:build": "cd search-frontend && npm run build",
+    "frontend:start": "cd search-frontend && npm start",
+    "dev": "npm run frontend:dev",
+    "start": "docker-compose up -d",
+    "insert-notes": "./scripts/run-insert-test-data.sh",
+    "init-collection": "./scripts/run-init-collection.sh",
+    "batch-vectorize": "./scripts/run-batch-vectorize.sh",
+    "check-data": "node scripts/check-mongo-data.js",
+    "recreate-collection": "node scripts/recreate-collection.js",
+    "test-full-flow": "./scripts/test-full-flow.sh",
+    "test-dashscope": "./scripts/test-dashscope-api.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,7 +27,7 @@
   "dependencies": {
     "axios": "^1.11.0",
     "dotenv": "^17.2.1",
-    "express": "^5.1.0",
-    "mongoose": "^8.17.2"
-  }
+    "mongoose": "^8.18.0"
+  },
+  "repository": "git@github.com:annyran0423/xiaohongshu-ai-search.git"
 }

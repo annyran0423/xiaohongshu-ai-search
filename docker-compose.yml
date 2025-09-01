@@ -1,0 +1,53 @@
+# Docker Compose 配置
+# Next.js 全栈应用架构
+
+services:
+  # MongoDB 数据库
+  mongodb:
+    image: mongo:6.0
+    container_name: xiaohongshu-mongodb
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_DATABASE: xiaohongshu
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - xiaohongshu-network
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.runCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Next.js 全栈应用 (前端 + API)
+  app:
+    build:
+      context: ./search-frontend
+      dockerfile: Dockerfile
+    container_name: xiaohongshu-app
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
+      - DASHVECTOR_API_KEY=${DASHVECTOR_API_KEY}
+      - DASHVECTOR_ENDPOINT=${DASHVECTOR_ENDPOINT}
+      - MONGODB_URI=${MONGODB_URI}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - xiaohongshu-network
+
+# 网络配置
+networks:
+  xiaohongshu-network:
+    driver: bridge
+
+# 数据卷配置
+volumes:
+  mongodb_data:
+    driver: local
